@@ -1,0 +1,10 @@
+kcpsm6.exe
+vivado_pid64882.str
+vivado.log
+vivado.jou
+KCPSM6_session_log.txt
+proyecto_final/proyecto_final.cache/
+proyecto_final/proyecto_final.sim/
+proyecto_final/proyecto_final.runs/
+set wildignore+=*.log,*.jou
+.Xil/
