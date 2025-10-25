@@ -10,8 +10,10 @@ module top_tb;
     wire [6:0] seg;
     wire [3:0] an;
 
-    // Instantiate your top module
-    top uut (
+    // Inicializar top module
+    top  #( .NUM_CPU(4) )
+    uut
+    (
         .clk(clk),
         .reset(reset),
         .sw(sw),
@@ -26,21 +28,14 @@ module top_tb;
     // Test sequence
     initial begin
         printed_output = 0;
-// Reset pulse
-        reset = 0;
-        #50;
-        reset = 1;
-        #50;
-        reset = 0;
-        #5000;
-        // Run long enough for CPU to execute instructions
-
-    
-        //$finish;
+        reset = 1;      // assert reset immediately
+        #100;           // hold long enough for clocks
+        reset = 0;      // RELEASE reset → CPUs start running HERE
+        #50000;         // let CPUs do work
     end
 
     always @(posedge clk) begin
-        if (uut.process_done & !printed_output) begin
+        if (&uut.cpu_processing_done && !printed_output) begin
             $display("At time %0t: process_done=1, cycles_counter=%d", $time, uut.cycles_counter);
             printed_output = 1;
         end

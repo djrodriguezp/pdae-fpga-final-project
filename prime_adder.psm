@@ -1,6 +1,6 @@
 ; Definimos constantes
 CONSTANT MEM_BASE_PORT_PORT_ID, 00
-CONSTANT MEM_OFFSET_PORT_ID, 01
+CONSTANT MEM_LAST_PORT_ID, 01
 CONSTANT MEM_DATA_PORT_ID, 02
 CONSTANT MEM_ADDR_PORT_ID, 03
 CONSTANT SUM_DONE_PORT_ID, 04
@@ -12,9 +12,8 @@ NAMEREG s0, counter_lsb
 NAMEREG s1, counter_msb
 NAMEREG s2, input_num
 NAMEREG s3, mem_addr_base
-NAMEREG s4, mem_offset
-NAMEREG s5, mem_max_addr
-NAMEREG s6, mem_curr_addr
+NAMEREG s4, mem_addr_last
+NAMEREG s6, mem_addr_curr
 NAMEREG s7, temp
 NAMEREG s8, done
 
@@ -23,29 +22,26 @@ NAMEREG s8, done
 LOAD counter_msb, 00
 LOAD counter_lsb, 00
 LOAD mem_addr_base, 00
-LOAD mem_offset, 00
-LOAD mem_max_addr, 00
-LOAD mem_curr_addr, 00
+LOAD mem_addr_last, 00
+LOAD mem_addr_curr, 00
 LOAD temp, 00
 LOAD done, 00
 INPUT mem_addr_base, MEM_BASE_PORT_PORT_ID
-ADD mem_curr_addr, 00   ;NOP
+ADD temp, 00   ;NOP
 INPUT mem_addr_base, FF ;NOP
-INPUT mem_offset, MEM_OFFSET_PORT_ID       
-ADD mem_curr_addr, 00   ;NOP
-INPUT mem_offset, FF    ;NOP
+INPUT mem_addr_last, MEM_LAST_PORT_ID       
+ADD temp, 00   ;NOP
+INPUT mem_addr_last, FF    ;NOP
 OUTPUT counter_lsb, SUM_NUM_LSB
 OUTPUT counter_msb, SUM_NUM_MSB
 OUTPUT done, SUM_DONE_PORT_ID
-LOAD mem_curr_addr, mem_addr_base
-LOAD mem_max_addr, mem_addr_base
-ADD mem_max_addr, mem_offset
+ADD mem_addr_curr, mem_addr_base
 
 MAIN:
-    OUTPUT mem_curr_addr, MEM_ADDR_PORT_ID
-    ADD mem_curr_addr, 00 ; NOP  
+    OUTPUT mem_addr_curr, MEM_ADDR_PORT_ID
+    ADD temp, 00 ; NOP  
     INPUT input_num, MEM_DATA_PORT_ID
-    ADD mem_curr_addr, 00  ;NOP
+    ADD temp, 00  ;NOP
     INPUT input_num, FF    ;NOP
 
     ; Validamos si el input es 2
@@ -74,9 +70,9 @@ MAIN:
 
     DONE_PRIME:
     
-    COMPARE mem_curr_addr, mem_max_addr
+    COMPARE mem_addr_curr, mem_addr_last
     JUMP Z, SUM_DONE 
-    ADD mem_curr_addr, 01
+    ADD mem_addr_curr, 01
     JUMP MAIN
 
 SUM_DONE:
