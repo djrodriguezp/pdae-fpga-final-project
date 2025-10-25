@@ -1,0 +1,217 @@
+; Definimos constantes
+CONSTANT MEM_BASE_PORT_PORT_ID, 00
+CONSTANT MEM_OFFSET_PORT_ID, 01
+CONSTANT MEM_DATA_PORT_ID, 02
+CONSTANT MEM_ADDR_PORT_ID, 03
+CONSTANT SUM_DONE_PORT_ID, 04
+CONSTANT LEDS_PORT_ID, 05
+
+; Renombramos registros para que sea más conveniente
+NAMEREG s0, counter_lsb
+NAMEREG s1, counter_msb
+NAMEREG s2, input_num
+NAMEREG s3, mem_addr_base
+NAMEREG s4, mem_offset
+NAMEREG s5, mem_max_addr
+NAMEREG s6, mem_curr_addr
+NAMEREG s7, temp
+NAMEREG s8, done
+
+; Inicio de ejecucion de instruciones
+; Se inicializan contadores
+LOAD counter_msb, 00
+LOAD counter_lsb, 00
+LOAD mem_addr_base, 00
+LOAD mem_offset, 00
+LOAD mem_max_addr, 00
+LOAD mem_curr_addr, 00
+LOAD temp, 00
+LOAD done, 00
+INPUT mem_addr_base, MEM_BASE_PORT_PORT_ID
+ADD mem_curr_addr, 00   ;NOP
+INPUT mem_addr_base, FF ;NOP
+INPUT mem_offset, MEM_OFFSET_PORT_ID       
+ADD mem_curr_addr, 00   ;NOP
+INPUT mem_offset, FF    ;NOP
+OUTPUT done, SUM_DONE_PORT_ID
+LOAD mem_curr_addr, mem_addr_base
+LOAD mem_max_addr, mem_addr_base
+ADD mem_max_addr, mem_offset
+
+MAIN:
+    OUTPUT mem_curr_addr, MEM_ADDR_PORT_ID
+    ADD mem_curr_addr, 00 ; NOP  
+    INPUT input_num, MEM_DATA_PORT_ID
+    ADD mem_curr_addr, 00  ;NOP
+    INPUT input_num, FF    ;NOP
+
+    ; Validamos si el input es 2
+    COMPARE input_num, 02
+    JUMP Z, IS_PRIME
+
+    ; Si el numero es par no lo evaluamos
+    LOAD temp, input_num
+    AND temp, 01
+    COMPARE temp, 00
+    JUMP Z, DONE_PRIME
+
+    ; Evaluamos si el numero es 127
+    COMPARE input_num, 7F
+    JUMP Z, IS_PRIME
+
+    ; Si el numero menor a 127 se busca la lista de los numeros de la izquierda
+    JUMP C, LEFT_HALF_PRIMES
+    ; Si el numero es mayor a 127 se buscan los numeros de la lista de la derecha
+    JUMP RIGHT_HALF_PRIMES
+
+    IS_PRIME:
+        ADD counter_lsb, input_num
+        JUMP DONE_PRIME
+
+    DONE_PRIME:
+    
+    COMPARE mem_curr_addr, mem_max_addr
+    JUMP Z, SUM_DONE 
+    ADD mem_curr_addr, 01
+    JUMP MAIN
+
+SUM_DONE:
+    LOAD done, 01
+    OUTPUT counter_lsb, LEDS_PORT_ID
+    OUTPUT done, SUM_DONE_PORT_ID
+    JUMP SUM_DONE
+
+; Los lookup de picoblaze tables no me funcionaban en el simulador de Vivado, así que me tocó
+; hacer este chapuz feo :(
+; Numeros primos < 127
+LEFT_HALF_PRIMES:
+    COMPARE input_num, 03
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 05
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 07
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 0B
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 0D
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 11
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 13
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 17
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 19
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 1D
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 1F
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 25
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 29
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 2B
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 2F
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 31
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 37
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 3B
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 3D
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 41
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 43
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 47
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 53
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 59
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 61
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 67
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 71
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 73
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 79
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 83
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 89
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 61
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 65
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 6B
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 71
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 73
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 7B
+    JUMP Z, IS_PRIME
+    JUMP DONE_PRIME
+
+
+; Numeros primos > 27
+RIGHT_HALF_PRIMES:
+    COMPARE input_num, 83
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 89
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 8B
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 95
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 97
+    JUMP Z, IS_PRIME
+    COMPARE input_num, 9D
+    JUMP Z, IS_PRIME
+    COMPARE input_num, A3
+    JUMP Z, IS_PRIME
+    COMPARE input_num, A7
+    JUMP Z, IS_PRIME
+    COMPARE input_num, AD
+    JUMP Z, IS_PRIME
+    COMPARE input_num, B3
+    JUMP Z, IS_PRIME
+    COMPARE input_num, B5
+    JUMP Z, IS_PRIME
+    COMPARE input_num, BD
+    JUMP Z, IS_PRIME
+    COMPARE input_num, BF
+    JUMP Z, IS_PRIME
+    COMPARE input_num, C3
+    JUMP Z, IS_PRIME
+    COMPARE input_num, C7
+    JUMP Z, IS_PRIME
+    COMPARE input_num, CB
+    JUMP Z, IS_PRIME
+    COMPARE input_num, D3
+    JUMP Z, IS_PRIME
+    COMPARE input_num, DF
+    JUMP Z, IS_PRIME
+    COMPARE input_num, E3
+    JUMP Z, IS_PRIME
+    COMPARE input_num, E7
+    JUMP Z, IS_PRIME
+    COMPARE input_num, ED
+    JUMP Z, IS_PRIME
+    COMPARE input_num, EF
+    JUMP Z, IS_PRIME
+    COMPARE input_num, F3
+    JUMP Z, IS_PRIME
+    COMPARE input_num, F7
+    JUMP Z, IS_PRIME
+    COMPARE input_num, FB
+    JUMP Z, IS_PRIME
+    JUMP DONE_PRIME

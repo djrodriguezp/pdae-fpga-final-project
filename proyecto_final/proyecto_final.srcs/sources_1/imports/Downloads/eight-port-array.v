@@ -73,8 +73,8 @@ assign DataBus7 = DataBus7_reg;
  
 always @ (posedge clk or posedge reset)
   if (reset) begin
-      Data[  0]=0;    
-      Data[  1]=3;
+      Data[  0]=251; //primo    
+      Data[  1]=3; //primo
       Data[  2]=0;    
       Data[  3]=0;
       Data[  4]=0;    
@@ -182,7 +182,7 @@ always @ (posedge clk or posedge reset)
       Data[106]=0;    
       Data[107]=0;
       Data[108]=0;    
-      Data[109]=0;
+      Data[109]=251;//primo
       Data[110]=0;    
       Data[111]=0;
       Data[112]=0;    
@@ -220,7 +220,7 @@ always @ (posedge clk or posedge reset)
       Data[144]=0;    
       Data[145]=0;
       Data[146]=0;    
-      Data[147]=0;
+      Data[147]=113; //primo
       Data[148]=0;    
       Data[149]=0;
       Data[150]=0;      
@@ -235,7 +235,7 @@ always @ (posedge clk or posedge reset)
       Data[159]=0;
       Data[160]=0;     
       Data[161]=0;
-      Data[162]=0;    
+      Data[162]=29; //primo    
       Data[163]=0;
       Data[164]=0;    
       Data[165]=0;
@@ -249,7 +249,7 @@ always @ (posedge clk or posedge reset)
       Data[173]=0;
       Data[174]=0;    
       Data[175]=0;
-      Data[176]=0;    
+      Data[176]=251; //primo   
       Data[177]=0;
       Data[178]=0;    
       Data[179]=0;
@@ -265,7 +265,7 @@ always @ (posedge clk or posedge reset)
       Data[189]=0;
       Data[190]=0;     
       Data[191]=0;
-      Data[192]=0;    
+      Data[192]=251; //primo
       Data[193]=0;
       Data[194]=0;    
       Data[195]=0;
@@ -291,43 +291,45 @@ always @ (posedge clk or posedge reset)
       Data[215]=0;
       Data[216]=0;    
       Data[217]=0;
-      Data[218]=0;    
+      Data[218]=233; //primo
       Data[219]=0;
       Data[220]=0;    
       Data[221]=0;
       Data[222]=0;    
       Data[223]=0;
       Data[224]=0;    
-      Data[225]=0;
+      Data[225]=44;
       Data[226]=0;    
       Data[227]=0;
-      Data[228]=0;    
+      Data[228]=68;    
       Data[229]=0;
       Data[230]=0;    
       Data[231]=0;
       Data[232]=0;    
       Data[233]=0;
-      Data[234]=0;    
+      Data[234]=197;     //primo
       Data[235]=0;
       Data[236]=0;    
-      Data[237]=5;
+      Data[237]=5; //primo
       Data[238]=0;    
       Data[239]=0;
       Data[240]=0;    
       Data[241]=4;
       Data[242]=0;    
-      Data[243]=0;
+      Data[243]=103; //primo
       Data[244]=0;    
       Data[245]=0;
       Data[246]=22;    
       Data[247]=0;
       Data[248]=0;    
-      Data[249]=11;
-      Data[250]=121;      
-      Data[251]=0;
+      Data[249]=11; // primo
+      Data[250]=121; 
+      Data[251]=131; //primo
       Data[252]=0;    
       Data[253]=0;
-      Data[254]=2;    
-      Data[255]=0;
+      Data[254]=2;  //primo
+      Data[255]=7; //primo
+      
+      //Suma de numeros primos = 1838 - 0x072E
     end
 endmodule

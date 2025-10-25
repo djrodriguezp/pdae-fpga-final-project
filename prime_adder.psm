@@ -4,7 +4,8 @@ CONSTANT MEM_OFFSET_PORT_ID, 01
 CONSTANT MEM_DATA_PORT_ID, 02
 CONSTANT MEM_ADDR_PORT_ID, 03
 CONSTANT SUM_DONE_PORT_ID, 04
-CONSTANT LEDS_PORT_ID, 05
+CONSTANT SUM_NUM_LSB, 05
+CONSTANT SUM_NUM_MSB, 06
 
 ; Renombramos registros para que sea más conveniente
 NAMEREG s0, counter_lsb
@@ -33,6 +34,8 @@ INPUT mem_addr_base, FF ;NOP
 INPUT mem_offset, MEM_OFFSET_PORT_ID       
 ADD mem_curr_addr, 00   ;NOP
 INPUT mem_offset, FF    ;NOP
+OUTPUT counter_lsb, SUM_NUM_LSB
+OUTPUT counter_msb, SUM_NUM_MSB
 OUTPUT done, SUM_DONE_PORT_ID
 LOAD mem_curr_addr, mem_addr_base
 LOAD mem_max_addr, mem_addr_base
@@ -62,10 +65,11 @@ MAIN:
     ; Si el numero menor a 127 se busca la lista de los numeros de la izquierda
     JUMP C, LEFT_HALF_PRIMES
     ; Si el numero es mayor a 127 se buscan los numeros de la lista de la derecha
-    JUMP RIGHT_HALF_PRIMES
+    JUMP NC, RIGHT_HALF_PRIMES
 
     IS_PRIME:
         ADD counter_lsb, input_num
+        ADDCY counter_msb, 00 ; Sumar carry out the la operacion anterior
         JUMP DONE_PRIME
 
     DONE_PRIME:
@@ -77,7 +81,8 @@ MAIN:
 
 SUM_DONE:
     LOAD done, 01
-    OUTPUT counter_lsb, LEDS_PORT_ID
+    OUTPUT counter_lsb, SUM_NUM_LSB
+    OUTPUT counter_msb, SUM_NUM_MSB
     OUTPUT done, SUM_DONE_PORT_ID
     JUMP SUM_DONE
 
@@ -85,133 +90,113 @@ SUM_DONE:
 ; hacer este chapuz feo :(
 ; Numeros primos < 127
 LEFT_HALF_PRIMES:
-    COMPARE input_num, 03
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 05
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 07
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 0B
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 0D
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 11
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 13
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 17
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 19
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 1D
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 1F
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 25
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 29
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 2B
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 2F
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 31
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 37
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 3B
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 3D
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 41
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 43
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 47
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 53
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 59
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 61
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 67
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 71
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 73
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 79
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 83
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 89
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 61
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 65
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 6B
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 71
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 73
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 7B
-    JUMP Z, IS_PRIME
+ 	COMPARE input_num, 3'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 5'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 7'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 11'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 13'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 17'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 19'd
+	JUMP Z, IS_PRIME
+	COMPARE input_num, 23'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 29'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 31'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 37'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 41'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 43'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 47'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 53'd
+	JUMP Z, IS_PRIME
+	COMPARE input_num, 59'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 61'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 67'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 71'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 73'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 79'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 83'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 89'd
+	JUMP Z, IS_PRIME
+	COMPARE input_num, 97'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 101'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 103'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 107'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 109'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 113'd
+	JUMP Z, IS_PRIME
     JUMP DONE_PRIME
 
 
-; Numeros primos > 27
+; Numeros primos > 127
 RIGHT_HALF_PRIMES:
-    COMPARE input_num, 83
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 89
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 8B
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 95
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 97
-    JUMP Z, IS_PRIME
-    COMPARE input_num, 9D
-    JUMP Z, IS_PRIME
-    COMPARE input_num, A3
-    JUMP Z, IS_PRIME
-    COMPARE input_num, A7
-    JUMP Z, IS_PRIME
-    COMPARE input_num, AD
-    JUMP Z, IS_PRIME
-    COMPARE input_num, B3
-    JUMP Z, IS_PRIME
-    COMPARE input_num, B5
-    JUMP Z, IS_PRIME
-    COMPARE input_num, BD
-    JUMP Z, IS_PRIME
-    COMPARE input_num, BF
-    JUMP Z, IS_PRIME
-    COMPARE input_num, C3
-    JUMP Z, IS_PRIME
-    COMPARE input_num, C7
-    JUMP Z, IS_PRIME
-    COMPARE input_num, CB
-    JUMP Z, IS_PRIME
-    COMPARE input_num, D3
-    JUMP Z, IS_PRIME
-    COMPARE input_num, DF
-    JUMP Z, IS_PRIME
-    COMPARE input_num, E3
-    JUMP Z, IS_PRIME
-    COMPARE input_num, E7
-    JUMP Z, IS_PRIME
-    COMPARE input_num, ED
-    JUMP Z, IS_PRIME
-    COMPARE input_num, EF
-    JUMP Z, IS_PRIME
-    COMPARE input_num, F3
-    JUMP Z, IS_PRIME
-    COMPARE input_num, F7
-    JUMP Z, IS_PRIME
-    COMPARE input_num, FB
-    JUMP Z, IS_PRIME
+ 	COMPARE input_num, 131'd
+	JUMP Z, IS_PRIME
+	COMPARE input_num, 137'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 139'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 149'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 151'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 157'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 163'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 167'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 173'd
+	JUMP Z, IS_PRIME
+	COMPARE input_num, 179'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 181'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 191'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 193'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 197'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 199'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 211'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 223'd
+	JUMP Z, IS_PRIME
+	COMPARE input_num, 227'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 229'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 233'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 239'd
+	JUMP Z, IS_PRIME
+ 	COMPARE input_num, 241'd
+	JUMP Z, IS_PRIME
+    COMPARE input_num, 251'd
+	JUMP Z, IS_PRIME
     JUMP DONE_PRIME

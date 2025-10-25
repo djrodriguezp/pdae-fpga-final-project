@@ -2,18 +2,21 @@
 
 module top_tb;
 
+    reg printed_output; 
     // Testbench signals
     reg clk;
     reg reset;
-    reg  sw;
-    wire [8:0] led;
+    wire  sw;
+    wire [6:0] seg;
+    wire [3:0] an;
 
     // Instantiate your top module
     top uut (
         .clk(clk),
         .reset(reset),
         .sw(sw),
-        .led(led)
+        .an(an),
+        .seg(seg)
     );
 
     // Clock generation: 100 MHz -> 10 ns period
@@ -22,20 +25,24 @@ module top_tb;
 
     // Test sequence
     initial begin
+        printed_output = 0;
 // Reset pulse
         reset = 0;
-        sw = 16'h0000;
         #50;
         reset = 1;
         #50;
         reset = 0;
-        sw = 16'h0004;
-    
-        
+        #5000;
         // Run long enough for CPU to execute instructions
-        #500000;
+
     
-        $finish;
+        //$finish;
     end
 
+    always @(posedge clk) begin
+        if (uut.process_done & !printed_output) begin
+            $display("At time %0t: process_done=1, cycles_counter=%d", $time, uut.cycles_counter);
+            printed_output = 1;
+        end
+    end
 endmodule
