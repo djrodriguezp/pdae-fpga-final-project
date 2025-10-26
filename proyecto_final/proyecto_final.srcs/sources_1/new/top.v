@@ -21,7 +21,7 @@
 
 
 module top #(
-    parameter integer NUM_CPU = 4 
+    parameter integer NUM_CPU = 4
 )(
     input clk,
     input reset,        
@@ -76,8 +76,8 @@ module top #(
     genvar i;
     generate
         for (i = 0; i < NUM_CPU; i = i + 1) begin : CPUS
-            localparam integer MEM_ADDR_BASE  = (256 / NUM_CPU) * i;
-            localparam integer MEM_ADDR_LAST = MEM_ADDR_BASE + (256 / NUM_CPU) - 1;
+            localparam integer MEM_ADDR_BASE  = (256 * i) / NUM_CPU;
+            localparam integer MEM_ADDR_LAST  = (256 * (i + 1)) / NUM_CPU - 1;
     
             pdae_cpu #(
             .MEM_ADDR_BASE(MEM_ADDR_BASE), 

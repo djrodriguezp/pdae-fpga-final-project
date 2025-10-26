@@ -11,7 +11,7 @@ module top_tb;
     wire [3:0] an;
 
     // Inicializar top module
-    top  #( .NUM_CPU(4) )
+    top  #( .NUM_CPU(8) )
     uut
     (
         .clk(clk),
@@ -36,7 +36,7 @@ module top_tb;
 
     always @(posedge clk) begin
         if (&uut.cpu_processing_done && !printed_output) begin
-            $display("At time %0t: process_done=1, cycles_counter=%d", $time, uut.cycles_counter);
+            $display("At time %0t: process_done=1, cpus=%d, cycles_counter=%d", $time, uut.NUM_CPU, uut.cycles_counter);
             printed_output = 1;
         end
     end
